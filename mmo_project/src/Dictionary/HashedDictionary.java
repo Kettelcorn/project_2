@@ -5,10 +5,23 @@ import java.util.Iterator;
 public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
 
     private int numberOfEntries;
+    private static final int DEFAULT_CAPACITY = 5;
+    private static final int MAX_CAPACITY = 10000;
+    private TableEntry<K,V>[] hashTable;
+    private int tableSize;
+    private static final int MAX_SIZE = 2 * MAX_CAPACITY;
+    private boolean integrityOK = false;
+    private static final double MAX_LOAD_FACTOR = 0.5;
+    private final TableEntry<K,V> AVAILABLE = new TableEntry<>(null, null);
 
     public HashedDictionary(int initialCapacity) {
         initialCapacity = checkCapacity(initialCapacity);
-
+        numberOfEntries = 0;
+        int tableSize = getNextPrime(initialCapacity);
+        checkSize(tableSize);
+        TableEntry<K,V>[] temp = (TableEntry<K, V>[])new TableEntry[tableSize];
+        hashTable = temp;
+        integrityOK = true;
     }
 
     public void displayHashTable() {
@@ -133,24 +146,71 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
 
     }
 
+    /**
+     * Return a prime number greater than given number and less than max size
+     *
+     * @return a valid prime number
+     */
     private boolean isHashTableTooFull() {
         return false;
     }
 
-    private int getNextPrime(int anInteger) {
-        return 0;
+    private int getNextPrime(int number) {
+        if (number % 2 == 0) {
+            number++;
+        }
+
+        while (!isPrime(number)) {
+            number = number + 2;
+        }
+        return number;
     }
 
-    private boolean isPrime(int anInteger) {
-        return false;
+    /**
+     * Tests if the given number is prime
+     *
+     * @param number number to be tested
+     * @return true/false if number is prime
+     */
+    private boolean isPrime(int number) {
+        boolean result;
+        boolean done = false;
+
+        if ((number == 1) || (number % 2 == 0)) {
+            result = false;
+        } else if ((number == 2) || (number == 3)) {
+            result = true;
+        } else {
+            assert (number % 2 != 0) && (number >= 5);
+            result = true;
+            for (int divisor = 3; !done && (divisor * divisor <= number); divisor = divisor + 2) {
+                if (number % divisor == 0) {
+                    result = false;
+                    done = true;
+                }
+            }
+        }
+        return result;
     }
 
     private void checkIntegrity() {
 
     }
 
+    /**
+     * Checks that the capacity is the correct size, and not larger that maximum
+     *
+     * @param capacity requested size of hash table
+     * @return the set size of hash table
+     */
     private int checkCapacity(int capacity) {
-        return 0;
+        if (capacity < DEFAULT_CAPACITY) {
+            capacity = DEFAULT_CAPACITY;
+        } else if (capacity > MAX_CAPACITY) {
+            throw new IllegalStateException("You can not create a dictionary with a capacity larger than" +
+                    MAX_CAPACITY);
+        }
+        return capacity;
     }
 
     private void checkSize(int size) {
@@ -221,10 +281,10 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         }
     }
 
-    protected final class Entry<K, V> {
+    protected final class TableEntry<K, V> {
         private K key;
         private V value;
-        private Entry(K searchKey, V dataValue) {
+        private TableEntry(K searchKey, V dataValue) {
             key = searchKey;
             value = dataValue;
         }
