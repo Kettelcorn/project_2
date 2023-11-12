@@ -17,8 +17,10 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     public HashedDictionary(int initialCapacity) {
         initialCapacity = checkCapacity(initialCapacity);
         numberOfEntries = 0;
+
         int tableSize = getNextPrime(initialCapacity);
         checkSize(tableSize);
+
         TableEntry<K,V>[] temp = (TableEntry<K, V>[])new TableEntry[tableSize];
         hashTable = temp;
         integrityOK = true;
@@ -40,6 +42,14 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public V add(K key, V value) {
+        checkIntegrity();
+        if ((key == null) || (value == null)) {
+            throw new IllegalArgumentException("Cannot put null values into a dictionary.");
+        } else {
+            V oldValue;
+
+            int index = getHashIndex(key);
+        }
         return null;
     }
 
@@ -131,10 +141,30 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     }
 
     private int getHashIndex(K key) {
-        return 0;
+        int hashIndex = key.hashCode() % hashTable.length;
+
+        if (hashIndex < 0) {
+            hashIndex = hashIndex + hashTable.length;
+        }
+
+        hashIndex = probe(hashIndex, key);
+        return hashIndex;
     }
 
     private int probe(int index, K key) {
+        boolean found = false;
+        int availableIndex = -1;
+        int increment = 1;
+
+        while (!found && (hashTable[index] != null)) {
+            if ((hashTable[index] != null) && (hashTable[index] != AVAILABLE)) {
+                if (key.equals(hashTable[index].getKey())) {
+                    found = true;
+                } else {
+                    index = (index + increment) % hashTable.length;
+                }
+            }
+        }
         return 0;
     }
 
@@ -193,8 +223,13 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         return result;
     }
 
+    /**
+     * Throw an exception if the integrity is not ok
+     */
     private void checkIntegrity() {
-
+        if (!integrityOK) {
+            throw new SecurityException("HashedDictionary object is corrupt.");
+        }
     }
 
     /**
@@ -213,8 +248,15 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         return capacity;
     }
 
+    /**
+     * Throw exception if hash table is too large
+     *
+     * @param size size of hash table to be checked
+     */
     private void checkSize(int size) {
-
+        if (size > MAX_SIZE) {
+            throw new IllegalStateException("Dictionary has become too large.");
+        }
     }
 
     private class KeyIterator implements Iterator<K> {
@@ -284,9 +326,9 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     protected final class TableEntry<K, V> {
         private K key;
         private V value;
-        private TableEntry(K searchKey, V dataValue) {
-            key = searchKey;
-            value = dataValue;
+        private TableEntry(K key, V value) {
+            this.key = key;
+            this.value = value;
         }
 
         private K getKey() {
