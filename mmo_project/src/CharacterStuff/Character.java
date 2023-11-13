@@ -1,6 +1,6 @@
 package CharacterStuff;
 
-public class Character {
+public class Character implements CharacterInterface{
     private String name;
     private int height;
     private int weight;
@@ -8,9 +8,9 @@ public class Character {
     private double moralAlign;
 
     public Character(String name, int height, int weight, double moralAlign) {
-        this.name = name;
-        this.height = height;
-        this.weight = weight;
+        setName(name);
+        setHeight(height);
+        setWeight(weight);
         this.moralAlign = moralAlign;
         health = 100;
     }
@@ -58,6 +58,33 @@ public class Character {
      */
     public double getMoralAlign() {
         return moralAlign;
+    }
+
+    /**
+     * Set the name of the character
+     *
+     * @param name name of character
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Set the height of the character
+     *
+     * @param height height of character
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    /**
+     * Set weight of the character
+     *
+     * @param weight weight of character
+     */
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     /**

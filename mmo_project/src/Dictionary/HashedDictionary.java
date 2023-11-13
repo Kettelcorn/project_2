@@ -63,6 +63,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
             V oldValue;
             int index = getHashIndex(key);
             assert(index >= 0) && (index < hashTable.length);
+            System.out.println("Index for " + key + ": " + index);
 
             if ((hashTable[index] == null) || (hashTable[index] == AVAILABLE)) {
                 hashTable[index] = new TableEntry<>(key, value);
