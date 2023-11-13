@@ -3,11 +3,20 @@ package CharacterStuff;
 import Dictionary.HashedDictionary;
 
 import java.util.ArrayList;
-
+/**
+ * The CharacterDatabase class represents a database for managing characters the MMOG
+ * It utilizes an ArrayList to store character instances and a HashedDictionary for retrieval of character indices.
+ */
 public class CharacterDatabase implements  CharacterDatabaseInterface{
+    //ArrayList to store character instances
     ArrayList<Character> characterList;
+    //HashDictionary for efficient retreval
     HashedDictionary<String, Integer> dictionary;
 
+    /**
+     * Constructor for creating a new CharacterDatabase instance.
+     * Initializes the characterList and dictionary with specified capacity, initially.
+     */
     public CharacterDatabase() {
         characterList = new ArrayList<>();
         dictionary = new HashedDictionary<>(10);
@@ -70,6 +79,7 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
                 System.out.println(character);
             } else {
                 System.out.println("Null");
+
             }
         }
         System.out.println();

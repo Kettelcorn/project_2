@@ -2,6 +2,8 @@ package Dictionary;
 
 import java.util.Iterator;
 
+//dictionary interface defines the interface to managed the hashDictionary of
+//characters and their data
 public interface DictionaryInterface <K,V> {
     /** Adds a new entry to this dictionary. If the given search key already
      exists in the dictionary, replaces the corresponding value.

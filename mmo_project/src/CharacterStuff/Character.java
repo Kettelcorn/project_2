@@ -1,5 +1,9 @@
 package CharacterStuff;
 
+/*
+ * The Character class represents a players character in a Massive Multiplayer Online Game (MMOG).
+ * It includes name, height, weight, health, and moral alignment.
+ **/
 public class Character implements CharacterInterface{
     private String name;
     private int height;
@@ -7,6 +11,14 @@ public class Character implements CharacterInterface{
     private int health;
     private double moralAlign;
 
+    /**
+    * construcvtor for creating a new instatance of Character
+    * @param name nane if charater
+    * @param height height of character
+    * @para weight weight of character
+    * @param moralAlign moral alignment of chracters from 0.0 to 1.0
+    * @throws IllegalArgumentException if moral alignment is not in range
+    * */
     public Character(String name, int height, int weight, double moralAlign) {
         if (moralAlign < 0.0 || moralAlign > 1.0) {
             throw new IllegalArgumentException("Moral alignment must be greater than 0.0 and less than 1.0");
@@ -79,6 +91,7 @@ public class Character implements CharacterInterface{
      * Set the height of the character
      *
      * @param height height of character
+     * @throws IllegalArgumentException if the height is less than or equal to 0.
      */
     public void setHeight(int height) {
         if (height <= 0) {
@@ -91,6 +104,7 @@ public class Character implements CharacterInterface{
      * Set weight of the character
      *
      * @param weight weight of character
+     * @throw nIllegalArgumentException ("Weight must be greater than 0");
      */
     public void setWeight(int weight) {
         if (height <= 0) {
@@ -104,6 +118,7 @@ public class Character implements CharacterInterface{
      * the players health becomes 100
      *
      * @param healAmount amount to be healed
+     * @throws IllegalArgumentException "Must be a positive number"
      */
     public void heal(int healAmount) {
         if (healAmount <= 0) {
@@ -117,6 +132,7 @@ public class Character implements CharacterInterface{
      * the players health is equal to 0
      *
      * @param injureAmount amount to be injured
+     * @throws IllegalArgumentException "Must be a positive number"
      */
     public void injure(int injureAmount) {
         if (injureAmount <= 0) {
@@ -129,6 +145,7 @@ public class Character implements CharacterInterface{
      * Changes the moral alignment of the character either up or down
      *
      * @param moralAlign the amount to change moral align
+     * @throws IllegalArgumentException if the resulting moral alignment is not within the valid range.
      */
     public void change(double moralAlign) {
         if (this.moralAlign + moralAlign < 0.0 || this.moralAlign + moralAlign > 1.0) {

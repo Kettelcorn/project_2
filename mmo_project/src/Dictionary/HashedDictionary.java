@@ -3,6 +3,12 @@ package Dictionary;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * A hash table-based implementation of the DictionaryInterface.
+ *
+ * @param <K> The type of keys in the dictionary.
+ * @param <V> The type of values in the dictionary.
+ */
 public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
 
     private int numberOfEntries;
@@ -15,6 +21,11 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     private static final double MAX_LOAD_FACTOR = 0.5;
     private final TableEntry<K,V> AVAILABLE = new TableEntry<>(null, null);
 
+    /**
+     * Constructs a new HashedDictionary with the specified initial capacity.
+     *
+     * @param initialCapacity The initial capacity of the hash table.
+     */
     public HashedDictionary(int initialCapacity) {
         initialCapacity = checkCapacity(initialCapacity);
         numberOfEntries = 0;
