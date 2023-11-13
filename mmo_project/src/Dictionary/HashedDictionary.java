@@ -458,14 +458,29 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
             this.value = value;
         }
 
+        /**
+         * Returns key for table entry
+         *
+         * @return key
+         */
         private K getKey() {
             return key;
         }
 
+        /**
+         * Returns value for table entry
+         *
+         * @return value
+         */
         private V getValue() {
             return value;
         }
 
+        /**
+         *  Sets the value for the given table entry
+         *
+         * @param newValue value to be set
+         */
         private void setValue(V newValue) {
             value = newValue;
         }
