@@ -47,10 +47,24 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
             throw new IllegalArgumentException("Cannot put null values into a dictionary.");
         } else {
             V oldValue;
-
             int index = getHashIndex(key);
+            assert(index >= 0) && (index < hashTable.length);
+
+            if ((hashTable[index] == null) || (hashTable[index] == AVAILABLE)) {
+                hashTable[index] = new TableEntry<>(key, value);
+                numberOfEntries++;
+                oldValue = null;
+            } else {
+                oldValue = hashTable[index].getValue();
+                hashTable[index].setValue(value);
+            }
+
+            if (isHashTableTooFull()) {
+                enlargeHashTable();
+            }
+
+            return oldValue;
         }
-        return null;
     }
 
     /**
@@ -62,7 +76,17 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public V remove(K key) {
-        return null;
+        checkIntegrity();
+        V removedValue = null;
+        int index = getHashIndex(key);
+
+        if ((hashTable[index] != null) && (hashTable[index] != AVAILABLE)) {
+            removedValue = hashTable[index].getValue();
+            hashTable[index] = AVAILABLE;
+            numberOfEntries--;
+        }
+
+        return removedValue;
     }
 
     /**
@@ -75,7 +99,15 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public V getValue(K key) {
-        return null;
+        checkIntegrity();
+        V result = null;
+
+        int index = getHashIndex(key);
+
+        if ((hashTable[index] != null) && hashTable[index] != AVAILABLE) {
+            result = hashTable[index].getValue();
+        }
+        return result;
     }
 
     /**
@@ -86,7 +118,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public boolean contains(K key) {
-        return false;
+        return getValue(key) != null;
     }
 
     /**
@@ -97,7 +129,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public Iterator<K> getKeyIterator() {
-        return null;
+        return new KeyIterator();
     }
 
     /**
@@ -108,7 +140,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public Iterator<V> getValueIterator() {
-        return null;
+        return new ValueIterator();
     }
 
     /**
@@ -118,7 +150,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return numberOfEntries == 0;
     }
 
     /**
@@ -129,7 +161,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public int getSize() {
-        return 0;
+        return numberOfEntries;
     }
 
     /**
@@ -137,9 +169,19 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public void clear() {
-
+        checkIntegrity();
+        for (int index = 0; index < hashTable.length; index++) {
+            hashTable[index] = null;
+        }
+        numberOfEntries = 0;
     }
 
+    /**
+     * Return the index that the given key will be stored at in the has table
+     *
+     * @param key key to be stored in hash table
+     * @return the index that key will be stored at
+     */
     private int getHashIndex(K key) {
         int hashIndex = key.hashCode() % hashTable.length;
 
@@ -151,6 +193,14 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         return hashIndex;
     }
 
+    /**
+     * Uses quadratic probing to either find where the key value is stored, or to find the index where it will be
+     * stored
+     *
+     * @param index index to starting probing from
+     * @param key key to insert into hash table
+     * @return index for key to be stored at
+     */
     private int probe(int index, K key) {
         boolean found = false;
         int availableIndex = -1;
@@ -161,19 +211,52 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
                 if (key.equals(hashTable[index].getKey())) {
                     found = true;
                 } else {
-                    index = (index + increment) % hashTable.length;
+                    index = (index + increment * increment) % hashTable.length;
+                    increment++;
                 }
             }
+            else {
+                if (availableIndex == -1) {
+                    availableIndex = index;
+                }
+                index = (index + increment * increment) % hashTable.length;
+                increment++;
+            }
         }
-        return 0;
+
+        if (found || availableIndex == -1) {
+            return index;
+        } else {
+            return availableIndex;
+        }
     }
 
-    private int locate(K key) {
-        return 0;
-    }
-
+    /**
+     * Creates new hash table with a larger length and re-hashes all the key value pairs
+     */
     private void enlargeHashTable() {
+        TableEntry<K,V>[] oldTable = hashTable;
+        int oldSize = hashTable.length;
+        int newSize = getNextPrime(oldSize + oldSize);
+        checkSize(newSize);
 
+        TableEntry<K,V>[] tempTable = (TableEntry<K,V>[])new TableEntry[newSize];
+        hashTable = tempTable;
+        numberOfEntries = 0;
+
+        for (int index = 0; index < oldSize; index++) {
+            if ((oldTable[index] != null) && (oldTable[index] != AVAILABLE)) {
+                add(oldTable[index].getKey(), oldTable[index].getValue());
+            }
+        }
+    }
+
+    /**
+     * Returns true if hash table size is grater than the load factor
+     * @return true if size is too large
+     */
+    private boolean isHashTableTooFull() {
+        return numberOfEntries > MAX_LOAD_FACTOR * hashTable.length;
     }
 
     /**
@@ -181,10 +264,6 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      *
      * @return a valid prime number
      */
-    private boolean isHashTableTooFull() {
-        return false;
-    }
-
     private int getNextPrime(int number) {
         if (number % 2 == 0) {
             number++;
