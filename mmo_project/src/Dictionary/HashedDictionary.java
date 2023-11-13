@@ -1,6 +1,7 @@
 package Dictionary;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
 
@@ -26,8 +27,21 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         integrityOK = true;
     }
 
+    /**
+     * Displays the hash table, printing either null, available, or the key value pair
+     */
     public void displayHashTable() {
-
+        checkIntegrity();
+        for (int index = 0; index < hashTable.length; index++) {
+            if (hashTable[index] == null) {
+                System.out.println("null");
+            } else if (hashTable[index] == AVAILABLE) {
+                System.out.println("available");
+            } else {
+                System.out.println(hashTable[index].getKey() + " " + hashTable[index].getValue());
+            }
+        }
+        System.out.println();
     }
 
     /**
@@ -339,8 +353,11 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     }
 
     private class KeyIterator implements Iterator<K> {
+        private  int currentIndex;
+        private int numberLeft;
         private KeyIterator() {
-
+            currentIndex = 0;
+            numberLeft = numberOfEntries;
         }
         /**
          * Returns {@code true} if the iteration has more elements.
@@ -351,7 +368,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
          */
         @Override
         public boolean hasNext() {
-            return false;
+            return numberLeft > 0;
         }
 
         /**
@@ -362,17 +379,33 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
          */
         @Override
         public K next() {
-            return null;
+            K result = null;
+
+            if (hasNext()) {
+                while ((hashTable[currentIndex] == null) || hashTable[currentIndex] == AVAILABLE) {
+                    currentIndex++;
+                }
+                result = hashTable[currentIndex].getKey();
+                numberLeft--;
+                currentIndex++;
+            }
+            else {
+                throw new NoSuchElementException();
+            }
+            return result;
         }
 
         public void remove() {
-
+            throw new UnsupportedOperationException();
         }
     }
 
     private class ValueIterator implements Iterator<V> {
+        private int currentIndex;
+        private int numberLeft;
         private ValueIterator() {
-
+            currentIndex = 0;
+            numberLeft = numberOfEntries;
         }
         /**
          * Returns {@code true} if the iteration has more elements.
@@ -383,7 +416,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
          */
         @Override
         public boolean hasNext() {
-            return false;
+            return numberLeft > 0;
         }
 
         /**
@@ -394,11 +427,23 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
          */
         @Override
         public V next() {
-            return null;
+            V result = null;
+
+            if (hasNext()) {
+                while ((hashTable[currentIndex] == null) || hashTable[currentIndex] == AVAILABLE) {
+                    currentIndex++;
+                }
+                result = hashTable[currentIndex].getValue();
+                numberLeft--;
+                currentIndex++;
+            } else {
+                throw new NoSuchElementException();
+            }
+            return result;
         }
 
         public void remove() {
-
+            throw new UnsupportedOperationException();
         }
     }
 
