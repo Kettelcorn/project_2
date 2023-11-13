@@ -33,6 +33,7 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
     @Override
     public void addCharacter(String name, int height, int weight, double moralAlign) {
         characterList.add(new Character(name, height, weight, moralAlign));
+        //O(n) runtime due to hashDictionary probing
         dictionary.add(name, characterList.size() - 1);
     }
 
@@ -44,6 +45,7 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
     @Override
     public void removeCharacter(String name) {
         characterList.set(dictionary.getValue(name), null);
+        //O(n) runtime due to hashDictionary probing
         dictionary.remove(name);
     }
 
@@ -54,6 +56,7 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
      * @return character object with given name
      */
     @Override
+    //O(n) because of probing the hashDictionary, worstcase scenaro
     public Character getCharacter(String name) {
         return characterList.get(dictionary.getValue(name));
     }
@@ -74,6 +77,7 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
     @Override
     public void printList() {
         System.out.println("Character List");
+        //O(n) where n in elements in characterList
         for (Character character: characterList) {
             if (character != null) {
                 System.out.println(character);
