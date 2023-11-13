@@ -44,6 +44,8 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     public void displayHashTable() {
         checkIntegrity();
         System.out.println("Hashed Dictionary: ");
+        // Runtime: O(N)
+        // Loops through each element in hash table and prints it out
         for (int index = 0; index < hashTable.length; index++) {
             System.out.print(index + ": ");
             if (hashTable[index] == null) {
@@ -74,8 +76,10 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         if ((key == null) || (value == null)) {
             throw new IllegalArgumentException("Cannot put null values into a dictionary.");
         } else {
+            //Runtime: O(n), due to getHashIndex being called
             System.out.println("Hash Index for " + key + ": " + key.hashCode() % hashTable.length);
             V oldValue;
+            //Finds next available index and adds entry or updates new value
             int index = getHashIndex(key);
             assert(index >= 0) && (index < hashTable.length);
 
@@ -87,7 +91,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
                 oldValue = hashTable[index].getValue();
                 hashTable[index].setValue(value);
             }
-
+            //Runtime: O(n) because you need to rehash each element
             if (isHashTableTooFull()) {
                 enlargeHashTable();
             }
@@ -107,6 +111,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     public V remove(K key) {
         checkIntegrity();
         V removedValue = null;
+        //Runtime: O(n), due to calling getHashIndex();
         int index = getHashIndex(key);
 
         if ((hashTable[index] != null) && (hashTable[index] != AVAILABLE)) {
@@ -131,6 +136,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         checkIntegrity();
         V result = null;
 
+        //Runtime: O(n) due to calling getHashIndex
         int index = getHashIndex(key);
 
         if ((hashTable[index] != null) && hashTable[index] != AVAILABLE) {
@@ -147,6 +153,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     @Override
     public boolean contains(K key) {
+        // Runtime: O(n) due to calling get value
         return getValue(key) != null;
     }
 
@@ -199,6 +206,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     @Override
     public void clear() {
         checkIntegrity();
+        // Runtime: O(n) because is iterates through each element in the hash table
         for (int index = 0; index < hashTable.length; index++) {
             hashTable[index] = null;
         }
@@ -216,7 +224,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         if (hashIndex < 0) {
             hashIndex = hashIndex + hashTable.length;
         }
-
+        //Runtime: O(n) because worst case, quadratic probing could go through whole hash table
         hashIndex = probe(hashIndex, key);
         return hashIndex;
     }
@@ -230,12 +238,15 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      * @return index for key to be stored at
      */
     private int probe(int index, K key) {
+        //Runtime: O(n), because worst case it could search through whole hash table
         boolean found = false;
         int availableIndex = -1;
         int increment = 1;
 
+        // continue to quadratic probe until finds an open or same index
         while (!found && (hashTable[index] != null)) {
             if ((hashTable[index] != null) && (hashTable[index] != AVAILABLE)) {
+                // if found, mark as found and leave loop
                 if (key.equals(hashTable[index].getKey())) {
                     found = true;
                 } else {
@@ -243,6 +254,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
                     increment++;
                 }
             }
+            // if slot is null or available, you found the right slot
             else {
                 if (availableIndex == -1) {
                     availableIndex = index;
@@ -270,6 +282,8 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      * Creates new hash table with a larger length and re-hashes all the key value pairs
      */
     private void enlargeHashTable() {
+        //Runtime: O(n), where n is the new size of the hash table
+        // doubles the size of the hash table
         TableEntry<K,V>[] oldTable = hashTable;
         int oldSize = hashTable.length;
         int newSize = getNextPrime(oldSize + oldSize);
@@ -279,6 +293,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         hashTable = tempTable;
         numberOfEntries = 0;
 
+        // re hash all of the elements in the original hash table to the new one
         for (int index = 0; index < oldSize; index++) {
             if ((oldTable[index] != null) && (oldTable[index] != AVAILABLE)) {
                 add(oldTable[index].getKey(), oldTable[index].getValue());
@@ -303,7 +318,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         if (number % 2 == 0) {
             number++;
         }
-
+        //Runtime: O(sqrt(n)) because this is the time complexity for finding the next prime number
         while (!isPrime(number)) {
             number = number + 2;
         }
@@ -320,6 +335,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         boolean result;
         boolean done = false;
 
+        // logic for checking if number is prime, returning the boolean if it is or not
         if ((number == 1) || (number % 2 == 0)) {
             result = false;
         } else if ((number == 2) || (number == 3)) {
