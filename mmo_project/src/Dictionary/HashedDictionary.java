@@ -249,6 +249,13 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
     }
 
     /**
+     * Not clear how to implement
+     */
+    private void locate() {
+        throw new UnsupportedOperationException("No support for method");
+    }
+
+    /**
      * Creates new hash table with a larger length and re-hashes all the key value pairs
      */
     private void enlargeHashTable() {
