@@ -8,10 +8,13 @@ public class Character implements CharacterInterface{
     private double moralAlign;
 
     public Character(String name, int height, int weight, double moralAlign) {
+        if (moralAlign < 0.0 || moralAlign > 1.0) {
+            throw new IllegalArgumentException("Moral alignment must be greater than 0.0 and less than 1.0");
+        }
         setName(name);
         setHeight(height);
         setWeight(weight);
-        this.moralAlign = moralAlign;
+        this.moralAlign = Math.round(moralAlign * 10) / 10.0;
         health = 100;
     }
 
@@ -66,6 +69,9 @@ public class Character implements CharacterInterface{
      * @param name name of character
      */
     public void setName(String name) {
+        if (name.equals("") || name == null) {
+            throw new IllegalArgumentException("Name must not be empty or null");
+        }
         this.name = name;
     }
 
@@ -75,6 +81,9 @@ public class Character implements CharacterInterface{
      * @param height height of character
      */
     public void setHeight(int height) {
+        if (height <= 0) {
+            throw new IllegalArgumentException("Height must be greater than 0");
+        }
         this.height = height;
     }
 
@@ -84,6 +93,9 @@ public class Character implements CharacterInterface{
      * @param weight weight of character
      */
     public void setWeight(int weight) {
+        if (height <= 0) {
+            throw new IllegalArgumentException("Weight must be greater than 0");
+        }
         this.weight = weight;
     }
 
@@ -123,6 +135,7 @@ public class Character implements CharacterInterface{
             throw new IllegalArgumentException("Moral alignment must not exceed 1.0 or be below 0.0");
         }
         this.moralAlign += moralAlign;
+        this.moralAlign = Math.round(this.moralAlign * 10) / 10.0;
     }
 
     /**

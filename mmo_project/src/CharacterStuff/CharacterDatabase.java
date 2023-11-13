@@ -64,10 +64,14 @@ public class CharacterDatabase implements  CharacterDatabaseInterface{
      */
     @Override
     public void printList() {
+        System.out.println("Character List");
         for (Character character: characterList) {
             if (character != null) {
-                System.out.println(character);    
+                System.out.println(character);
+            } else {
+                System.out.println("Null");
             }
         }
+        System.out.println();
     }
 }

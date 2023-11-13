@@ -32,14 +32,17 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     public void displayHashTable() {
         checkIntegrity();
+        System.out.println("Hashed Dictionary: ");
         for (int index = 0; index < hashTable.length; index++) {
+            System.out.print(index + ": ");
             if (hashTable[index] == null) {
-                System.out.println("null");
+                System.out.print("null");
             } else if (hashTable[index] == AVAILABLE) {
-                System.out.println("available");
+                System.out.print("available");
             } else {
-                System.out.println(hashTable[index].getKey() + " " + hashTable[index].getValue());
+                System.out.print(hashTable[index].getKey() + " " + hashTable[index].getValue());
             }
+            System.out.println();
         }
         System.out.println();
     }
@@ -60,10 +63,10 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
         if ((key == null) || (value == null)) {
             throw new IllegalArgumentException("Cannot put null values into a dictionary.");
         } else {
+            System.out.println("Hash Index for " + key + ": " + key.hashCode() % hashTable.length);
             V oldValue;
             int index = getHashIndex(key);
             assert(index >= 0) && (index < hashTable.length);
-            System.out.println("Index for " + key + ": " + index);
 
             if ((hashTable[index] == null) || (hashTable[index] == AVAILABLE)) {
                 hashTable[index] = new TableEntry<>(key, value);
@@ -199,7 +202,6 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
      */
     private int getHashIndex(K key) {
         int hashIndex = key.hashCode() % hashTable.length;
-
         if (hashIndex < 0) {
             hashIndex = hashIndex + hashTable.length;
         }
@@ -226,7 +228,7 @@ public class HashedDictionary<K, V> implements DictionaryInterface<K,V>{
                 if (key.equals(hashTable[index].getKey())) {
                     found = true;
                 } else {
-                    index = (index + increment * increment) % hashTable.length;
+                    index = (index + (increment * increment)) % hashTable.length;
                     increment++;
                 }
             }
